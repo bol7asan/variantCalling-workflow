@@ -1,0 +1,12 @@
+{
+  "variant_calling.outdir": "/media/HiC_D1/Exome_Seq/analysis",
+  "variant_calling.threads": 8,
+  "variant_calling.fastq_dirs": ["/media/HiC_D1/Exome_Seq/fastq/22RV1_200nMZENR","/media/HiC_D1/Exome_Seq/fastq/22RV1_Ctrl","/media/HiC_D1/Exome_Seq/fastq/LNCaP_200nMZENR","/media/HiC_D1/Exome_Seq/fastq/LNCaP_Ctrl"],
+  "variant_calling.refgenome": "/media/data1/genome/GRCH38/BWA/genome.fa",
+  "variant_calling.indels": "/media/HiC_D1/scripts/pipelines/variant_calling/data/Homo_sapiens_assembly38.known_indels.vcf.gz",
+  "variant_calling.snps": "/media/HiC_D1/scripts/pipelines/variant_calling/data/1000G_phase1.snps.high_confidence.hg38.vcf.gz",
+  "variant_calling.snpsIndex": "/media/HiC_D1/scripts/pipelines/variant_calling/data/1000G_phase1.snps.high_confidence.hg38.vcf.gz.tbi",
+  "variant_calling.indelIndex": "/media/HiC_D1/scripts/pipelines/variant_calling/data/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"
+  
+}
+
