@@ -15,14 +15,14 @@ task QC_Trimming {
 
     command <<<
 
-       FASTQC=~{outdir}/FASTQC
+    FASTQC=~{outdir}/FASTQC
 
         ##Check if the directory exists, otherwise create the directory.
         [ -d $FASTQC ] && echo $(date) "===================> FASTQC Directory Exists" | tee -a out.log \
         || echo $(date) "===================> FASTQC directory does not exist, Creating FASTQC Directory" | tee -a out.log \
         && mkdir -p  $FASTQC
 
-        # fastqc ~{sep =' ' fastqs}  -t ~{threads} -o $FASTQC  > $FASTQC/FASTQC.log 2>&1
+        fastqc ~{sep =' ' fastqs}  -t ~{threads} -o $FASTQC  > $FASTQC/FASTQC.log 2>&1
         trim_galore --paired --illumina --fastqc \
         -o $FASTQC  ~{sep =' ' fastqs}
     >>>
@@ -71,7 +71,7 @@ task align_reads {
         ## Align reads and remove duplicates, skip SAM file and directly pipe the output of BOWTIE2 into samtools
         ## To get the bam file
         bowtie2 -x ~{genomeDir} -U ~{sep =',' fastqs}  -p ~{threads} 2>$BOWTIE/BOWTIE.log \
-         | samtools view -b -F 3340  -q 30 -o ${BOWTIE}/${name}_~{genomeName}_filtered.bam
+        | samtools view -b -F 3340  -q 30 -o ${BOWTIE}/${name}_~{genomeName}_filtered.bam
 
 
         ##  Sort alignments by coordinates on the genome.
@@ -129,7 +129,7 @@ task align_reads_vc {
         out_dir=~{outdir}/bams
         [ -d $out_dir ] || mkdir $out_dir
 
-        # bwa mem -t ~{threads} ~{refgenome} ~{fastq_dir}/*.gz |  samtools view -b -q20 | samtools sort > ${out_dir}/~{name}.bam
+        bwa mem -t ~{threads} ~{refgenome} ~{fastq_dir}/*.gz |  samtools view -b -q20 | samtools sort > ${out_dir}/~{name}.bam
         conda deactivate
     >>>
 
@@ -150,14 +150,14 @@ task markDup {
 
     command <<<
 
-        # [ -d ~{outdir}/bams/dup_stats ] || mkdir ~{outdir}/bams/dup_stats
-        # gatk MarkDuplicates -I ~{bam} -O  ~{outdir}/bams/~{name}_dedup.bam -M ~{outdir}/bams/dup_stats/~{name}_dup_stats.txt
+        [ -d ~{outdir}/bams/dup_stats ] || mkdir ~{outdir}/bams/dup_stats
+        gatk MarkDuplicates -I ~{bam} -O  ~{outdir}/bams/~{name}_dedup.bam -M ~{outdir}/bams/dup_stats/~{name}_dup_stats.txt
 
     >>>
 
     output {
         File dedup_bam = outdir + "/bams/" + name + "_dedup.bam"
-     }
+    }
 }
 
 
@@ -173,8 +173,8 @@ task add_rg {
     }
 
     command <<<
-        # gatk AddOrReplaceReadGroups -I ~{bam} -O ~{outdir}/bams/~{name}_dedup_ann.bam \
-        #  -PL ILLUMINA -LB ~{LB} -SO coordinate -SM ~{name} -PU ~{PU}  --CREATE_INDEX True -ID ~{ID}
+        gatk AddOrReplaceReadGroups -I ~{bam} -O ~{outdir}/bams/~{name}_dedup_ann.bam \
+        -PL ILLUMINA -LB ~{LB} -SO coordinate -SM ~{name} -PU ~{PU}  --CREATE_INDEX True -ID ~{ID}
 
     >>>
 
@@ -208,11 +208,8 @@ task BQSR {
 
     command <<<
 
-
-      
-
-
-        gatk BaseRecalibrator -R ~{refgenome} --known-sites ~{indels} --known-sites ~{snps}  -I ~{bam} -O ~{outdir}/bams/~{name}_recal.table
+    
+    gatk BaseRecalibrator -R ~{refgenome} --known-sites ~{indels} --known-sites ~{snps}  -I ~{bam} -O ~{outdir}/bams/~{name}_recal.table
 
 
 
