@@ -15,19 +15,16 @@ task QC_Trimming {
 
     command <<<
 
-        # source activate trim_galore
-        # FASTQC=~{outdir}/FASTQC
+       FASTQC=~{outdir}/FASTQC
 
-        # ##Check if the directory exists, otherwise create the directory.
-        # [ -d $FASTQC ] && echo $(date) "===================> FASTQC Directory Exists" | tee -a out.log \
-        # || echo $(date) "===================> FASTQC directory does not exist, Creating FASTQC Directory" | tee -a out.log \
-        # && mkdir -p  $FASTQC
+        ##Check if the directory exists, otherwise create the directory.
+        [ -d $FASTQC ] && echo $(date) "===================> FASTQC Directory Exists" | tee -a out.log \
+        || echo $(date) "===================> FASTQC directory does not exist, Creating FASTQC Directory" | tee -a out.log \
+        && mkdir -p  $FASTQC
 
-        # # fastqc ~{sep =' ' fastqs}  -t ~{threads} -o $FASTQC  > $FASTQC/FASTQC.log 2>&1
-        #  trim_galore --paired --illumina --fastqc \
-        #   -o $FASTQC  ~{sep =' ' fastqs}
-
-        # conda deactivate
+        # fastqc ~{sep =' ' fastqs}  -t ~{threads} -o $FASTQC  > $FASTQC/FASTQC.log 2>&1
+        trim_galore --paired --illumina --fastqc \
+        -o $FASTQC  ~{sep =' ' fastqs}
     >>>
 
     parameter_meta {
@@ -40,10 +37,6 @@ task QC_Trimming {
         description: "This tasks performs a quality check on the fastq files."
         author: "Mohammed Alhusayan"
         email: "mohammed.alhusayan@pennmedicine.upenn.edu"
-    }
-     ## Add docker image after you resolve installation issue.
-    runtime {
-        cpu: threads
     }
 
 
@@ -219,7 +212,7 @@ task BQSR {
       
 
 
-        # gatk BaseRecalibrator -R ~{refgenome} --known-sites ~{indels} --known-sites ~{snps}  -I ~{bam} -O ~{outdir}/bams/~{name}_recal.table
+        gatk BaseRecalibrator -R ~{refgenome} --known-sites ~{indels} --known-sites ~{snps}  -I ~{bam} -O ~{outdir}/bams/~{name}_recal.table
 
 
 
